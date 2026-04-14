@@ -4,8 +4,7 @@ from sklearn.preprocessing import StandardScaler, LabelEncoder
 
 class DataProcessor:
     """
-    Handles loading and preprocessing of the dataset.
-    Includes cleaning, encoding categorical variables, and scaling features.
+    Handles data loading and preprocessing for the personality dataset.
     """
 
     def __init__(self):
@@ -13,26 +12,40 @@ class DataProcessor:
         self.label_encoder = LabelEncoder()
 
     def load_data(self, path):
+        """
+        Loads dataset from a CSV file.
+        """
         return pd.read_csv(path)
 
     def preprocess(self, df):
-        # Remove duplicate rows
+        """
+        Cleans and prepares the dataset for model training.
+
+        Steps:
+        - Removes duplicate rows
+        - Encodes categorical variables
+        - Splits into features and target
+        - Scales numerical features
+        """
+
+        # Remove duplicate rows to avoid bias
         df = df.drop_duplicates()
 
-        # Encode binary categorical variables
+        # Convert Yes/No categorical variables to binary (1/0)
         categorical_cols = ["Stage_fear", "Drained_after_socializing"]
         binary_map = {"Yes": 1, "No": 0}
 
         for col in categorical_cols:
             df[col] = df[col].map(binary_map)
 
-        # Target encoding (Extrovert=1, Introvert=0)
+        # Encode target variable (Introvert=0, Extrovert=1)
         df["Personality"] = self.label_encoder.fit_transform(df["Personality"])
 
+        # Split features and target
         X = df.drop("Personality", axis=1)
         y = df["Personality"]
 
-        # Data scaling
+        # Scale features for better model performance
         X_scaled = self.scaler.fit_transform(X)
 
         return X_scaled, y
