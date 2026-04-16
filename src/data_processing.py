@@ -16,6 +16,7 @@ class DataProcessor:
         """
         self.scaler = StandardScaler()
         self.label_encoder = LabelEncoder()
+        self.feature_names = None
 
     def load_data(self, path):
         """
@@ -57,6 +58,9 @@ class DataProcessor:
         X = df.drop("Personality", axis=1)
         y = df["Personality"]
 
+        # Store feature names to ensure consistent input format during prediction
+        self.feature_names = X.columns
+
         # Scale features for better model performance
         X_scaled = self.scaler.fit_transform(X)
 
@@ -64,12 +68,19 @@ class DataProcessor:
 
     def transform_input(self, input_data):
         """
-        Applies the same scaling transformation to new input data.
+        Transforms raw user input into the correct format and applies scaling.
+
+        The input is converted into a DataFrame with the same feature names
+        used during training to ensure consistency between training and prediction.
 
         Args:
-            input_data (list): Raw user input
+            input_data (list): Raw user input values
 
         Returns:
-            array: Scaled input data
+            array: Scaled input data ready for prediction
         """
-        return self.scaler.transform([input_data])
+
+        # Convert input to DataFrame with same column names
+        input_df = pd.DataFrame([input_data], columns=self.feature_names)
+
+        return self.scaler.transform(input_df)
