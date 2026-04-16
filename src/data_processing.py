@@ -49,3 +49,9 @@ class DataProcessor:
         X_scaled = self.scaler.fit_transform(X)
 
         return X_scaled, y
+
+    def transform_input(self, input_data):
+        """
+        Scales user input.
+        """
+        return self.scaler.transform([input_data])
