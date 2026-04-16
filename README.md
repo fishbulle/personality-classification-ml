@@ -44,20 +44,36 @@ project/
 
 ### 1. Clone the repository
 
-```bash
-git clone <your-repo-url>
+```bash id="q0b6fx"
+git clone https://github.com/fishbulle/personality-classification-ml.git
 cd personality-classification-ml
 ```
 
-### 2. Install dependencies
+### 2. Create and activate a virtual environment
 
-```bash
+#### Windows:
+
+```bash id="k8rv5u"
+python -m venv venv
+venv\Scripts\activate
+```
+
+#### Mac/Linux:
+
+```bash id="pq5lyh"
+python3 -m venv venv
+source venv/bin/activate
+```
+
+### 3. Install dependencies
+
+```bash id="2h1s4z"
 pip install -r requirements.txt
 ```
 
-### 3. Run the application
+### 4. Run the application
 
-```bash
+```bash id="pynm3y"
 cd src
 python main.py
 ```
