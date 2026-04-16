@@ -4,16 +4,28 @@ from sklearn.preprocessing import StandardScaler, LabelEncoder
 
 class DataProcessor:
     """
-    Handles data loading and preprocessing for the personality dataset.
+    Handles loading and preprocessing of the dataset,
+    including cleaning, encoding, and feature scaling.
     """
 
     def __init__(self):
+        """
+        Initializes preprocessing tools:
+        - StandardScaler for feature scaling
+        - LabelEncoder for target encoding
+        """
         self.scaler = StandardScaler()
         self.label_encoder = LabelEncoder()
 
     def load_data(self, path):
         """
         Loads dataset from a CSV file.
+
+        Args:
+            path (str): File path to dataset
+
+        Returns:
+            DataFrame: Loaded dataset
         """
         return pd.read_csv(path)
 
@@ -52,6 +64,12 @@ class DataProcessor:
 
     def transform_input(self, input_data):
         """
-        Scales user input.
+        Applies the same scaling transformation to new input data.
+
+        Args:
+            input_data (list): Raw user input
+
+        Returns:
+            array: Scaled input data
         """
         return self.scaler.transform([input_data])
