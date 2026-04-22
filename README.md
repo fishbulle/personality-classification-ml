@@ -122,4 +122,4 @@ The dataset used contains behavioral indicators such as:
 
 ## 👤 Author
 
-fishbulle
+Angelina Malmros
