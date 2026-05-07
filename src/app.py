@@ -1,46 +1,89 @@
-class App:
+import streamlit as st
+from pathlib import Path
+
+from data_processing import DataProcessor
+from model_training import ModelTrainer
+
+BASE_DIR = Path(__file__).parent.parent
+DATA_PATH = BASE_DIR / "data" / "personality_dataset.csv"
+
+
+def load_model_and_processor():
     """
-    Handles user interaction through a terminal-based interface.
-    Collects input data and uses the trained model for predictions.
+    Loads the trained machine learning model and initializes
+    the data processor.
+
+    Returns:
+        tuple:
+            DataProcessor instance for preprocessing user input
+            ModelTrainer instance with loaded trained model
     """
 
-    def __init__(self, model, processor):
-        """
-        Initializes the application.
+    dp = DataProcessor()
+    mt = ModelTrainer()
 
-        Args:
-            model: Trained machine learning model
-            processor: DataProcessor instance for preprocessing input
-        """
-        self.model = model
-        self.processor = processor
+    df = dp.load_data(DATA_PATH)
+    dp.preprocess(df)
 
-    def get_user_input(self):
-        """
-        Prompts the user to input behavioral data.
+    mt.load_model()
 
-        The user provides values on a relative scale rather than exact units,
-        to match the format of the training dataset.
+    return dp, mt
 
-        Returns:
-            list: User input as numerical values
-        """
-        print(
-            "\nAnswer based on relative levels and not exact units. Higher number means higher frequency."
-        )
 
-        # Collect user input for each feature
-        time_alone = float(input("Time spent alone (0-11): "))
-        stage_fear = int(input("Do you feel stage fear? (1 = Yes, 0 = No) "))
-        social_events = float(input("Social event attendance (0-10): "))
-        going_outside = float(input("Going outside (0-7): "))
-        drained = int(
-            input("Do you feel drained after socializing? (1 = Yes, 0 = No) ")
-        )
-        friends = float(input("What size is your friends circle? (0-15) "))
-        posts = float(input("Post frequency (0-10): "))
+def main():
+    """
+    Main entry point for the Streamlit web application.
 
-        return [
+    Workflow:
+    - Configure Streamlit page settings
+    - Load trained model and processor
+    - Collect user behavioral data
+    - Preprocess input data
+    - Generate personality prediction
+    - Display prediction result
+    """
+
+    # Configure Streamlit page
+    st.set_page_config(
+        page_title="Personality Predictor",
+        page_icon="🧠",
+        layout="centered",
+    )
+
+    # Page title and instructions
+    st.title("🧠 Personality Predictor")
+
+    st.write(
+        "Answer based on relative levels and not exact units. "
+        "Higher number means higher frequency."
+    )
+
+    # Load model and preprocessing tools
+    dp, mt = load_model_and_processor()
+
+    st.subheader("Enter your information")
+
+    # User input fields
+    time_alone = st.slider("Time spent alone", 0.0, 11.0, 5.0)
+    stage_fear = st.radio(
+        "Do you feel stage fear?",
+        [1, 0],
+        format_func=lambda x: "Yes" if x == 1 else "No",
+    )
+    social_events = st.slider("Social event attendance", 0.0, 10.0, 5.0)
+    going_outside = st.slider("Going outside", 0.0, 7.0, 3.0)
+    drained = st.radio(
+        "Do you feel drained after socializing?",
+        [1, 0],
+        format_func=lambda x: "Yes" if x == 1 else "No",
+    )
+    friends = st.slider("Friends circle size", 0.0, 15.0, 5.0)
+    posts = st.slider("Post frequency", 0.0, 10.0, 5.0)
+
+    # Run prediction when button is clicked
+    if st.button("Predict"):
+        # Collect user input into a list
+        data = [
             time_alone,
             stage_fear,
             social_events,
@@ -50,31 +93,20 @@ class App:
             posts,
         ]
 
-    def run(self):
-        """
-        Runs the application loop.
+        # Apply preprocessing to match training data format
+        processed = dp.transform_input(data)
 
-        Continuously collects user input, performs prediction,
-        and displays the result until the user chooses to exit.
-        """
-        while True:
-            # Get input from user
-            data = self.get_user_input()
+        # Generate prediction using trained model
+        prediction = mt.predict(processed)
 
-            # Apply preprocessing (scaling)
-            processed = self.processor.transform_input(data)
+        # Display prediction result
+        st.subheader("Result")
 
-            # Make prediction
-            prediction = self.model.predict(processed)
+        if prediction[0] == 1:
+            st.success("🧑 You seem like an extrovert")
+        else:
+            st.info("🧘 You seem like an introvert")
 
-            # Display result
-            print("\n--- Result ---")
-            if prediction[0] == 1:
-                print("🧑 You seem like an extrovert")
-            else:
-                print("🧘 You seem like an introvert")
 
-            # Ask user if they want to try again
-            again = input("\nTry again? (y/n): ")
-            if again.lower() != "y":
-                break
+if __name__ == "__main__":
+    main()

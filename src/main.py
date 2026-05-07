@@ -1,18 +1,16 @@
 from data_processing import DataProcessor
 from model_training import ModelTrainer
-from app import App
 
 
 def main():
     """
-    Main entry point of the application.
+    Trains and saves the personality classification model.
 
     Workflow:
     - Load dataset
     - Preprocess data
     - Train model
-    - Save and reload model
-    - Start the user interface
+    - Save the model
     """
 
     # Initialize components
@@ -31,12 +29,7 @@ def main():
     print("Saving model...")
     mt.save_model()
 
-    print("Loading model...")
-    mt.load_model()
-
-    print("\nStarting application...")
-    app = App(mt, dp)
-    app.run()
+    print("Training complete and model saved.")
 
 
 if __name__ == "__main__":
