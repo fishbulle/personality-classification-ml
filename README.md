@@ -6,6 +6,8 @@ This project is a machine learning application that classifies whether a person 
 
 The model is trained on a dataset containing features such as time spent alone, social activity, and social media usage.
 
+The application includes an interactive web interface built with Streamlit for real-time predictions.
+
 ---
 
 ## ⚙️ Features
@@ -14,28 +16,31 @@ The model is trained on a dataset containing features such as time spent alone, 
 * Exploratory Data Analysis (EDA) in Jupyter Notebook
 * Model training using Logistic Regression
 * Model evaluation (Accuracy, F1 Score, ROC AUC, Confusion Matrix)
-* Terminal-based application for real-time predictions
+* Interactive Streamlit web application for predictions
+* Model persistence using Joblib
 
 ---
 
 ## 📂 Project Structure
 
-```
+```text
 project/
 │
 ├── data/
 │   └── personality_dataset.csv
 │
-├── src/
-│   ├── data_processing.py
-│   ├── model_training.py
-│   ├── app.py
-│   └── main.py
-│
 ├── notebooks/
 │   └── analysis.ipynb
 │
-└── requirements.txt
+├── src/
+│   ├── app.py
+│   ├── data_processing.py
+│   ├── main.py
+│   └── model_training.py
+│
+├── model.pkl
+├── requirements.txt
+└── README.md
 ```
 
 ---
@@ -44,49 +49,89 @@ project/
 
 ### 1. Clone the repository
 
-```bash id="q0b6fx"
+```bash
 git clone https://github.com/fishbulle/personality-classification-ml.git
 cd personality-classification-ml
 ```
 
+---
+
 ### 2. Create and activate a virtual environment
 
-#### Windows:
+#### Windows
 
-```bash id="k8rv5u"
+```bash
 python -m venv venv
 venv\Scripts\activate
 ```
 
-#### Mac/Linux:
+#### Mac/Linux
 
-```bash id="pq5lyh"
+```bash
 python3 -m venv venv
 source venv/bin/activate
 ```
 
+---
+
 ### 3. Install dependencies
 
-```bash id="2h1s4z"
+```bash
 pip install -r requirements.txt
 ```
 
-### 4. Run the application
+---
 
-```bash id="pynm3y"
-cd src
-python main.py
+### 4. Train the model
+
+Run the training script:
+
+```bash
+python src/main.py
 ```
+
+This will:
+
+* Load and preprocess the dataset
+* Train the Logistic Regression model
+* Save the trained model as `model.pkl`
+
+---
+
+### 5. Start the Streamlit application
+
+From the project root:
+
+```bash
+streamlit run src/app.py
+```
+
+The app will open automatically in your browser.
 
 ---
 
 ## 🧠 How It Works
 
-1. The dataset is loaded and preprocessed (cleaning, encoding, scaling)
-2. The model is trained on the processed data
-3. The trained model is saved and reused
-4. The user provides input through the terminal
-5. The model predicts whether the user is introvert or extrovert
+1. The dataset is loaded and preprocessed
+2. Features are cleaned, encoded, and scaled
+3. A Logistic Regression model is trained
+4. The trained model is saved using Joblib
+5. Users enter behavioral data in the Streamlit interface
+6. The model predicts whether the user is more introverted or extroverted
+
+---
+
+## 📊 Input Features
+
+The prediction is based on behavioral indicators such as:
+
+* Time spent alone
+* Stage fear
+* Social event attendance
+* Going outside frequency
+* Feeling drained after socializing
+* Friend circle size
+* Social media posting frequency
 
 ---
 
@@ -97,26 +142,22 @@ python main.py
 * scikit-learn
 * matplotlib
 * seaborn
+* streamlit
 * joblib
+
+Install all dependencies with:
+
+```bash
+pip install -r requirements.txt
+```
 
 ---
 
 ## ⚠️ Notes
 
-* The dataset uses relative scales rather than exact real-world units.
-* User input is therefore based on relative values (e.g., 0–10 scale).
-* The trained model file (`model.pkl`) is generated during runtime and is not included in the repository.
-
----
-
-## 📊 Dataset
-
-The dataset used contains behavioral indicators such as:
-
-* Time spent alone
-* Social event attendance
-* Going outside frequency
-* Social media activity
+* The dataset uses relative scales rather than exact real-world units
+* User input is therefore based on relative values (e.g. 0–10 scale)
+* The trained model file (`model.pkl`) is generated during runtime and is not included in the repository
 
 ---
 
